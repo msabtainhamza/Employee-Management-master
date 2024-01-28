@@ -1,0 +1,143 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="{% static './css/employeedata.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        .user-detail {
+            margin-bottom: 10px;
+        }
+        .user-detail label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'all' %}" >Back</a>
+        <h1>User Profile</h1>
+        <div class="user-detail"><label>Name:</label> {{ first_name }}</div>
+        <div class="user-detail"><label>Last Name:</label> {{ last_name }}</div>
+        <div class="user-detail"><label>Email:</label> {{ email }}</div>
+        <div class="user-detail"><label>Department:</label> {{ dept }}</div>
+        <div class="user-detail"><label>Salary:</label> {{ salary }}</div>
+        <div class="user-detail"><label>Bonus:</label> {{ bonus }}</div>
+        <div class="user-detail"><label>Role:</label> {{ role }}</div>
+        <div class="user-detail"><label>Phone Number:</label> {{ phone }}</div>
+        <div class="user-detail"><label>Hiring Date:</label> {{ hire_date }}</div>
+        <div class="user-detail"><label>Status:</label> {{ status }}</div>
+    </div>
+    <div class="salary-form">
+        <!-- make a form to add salaries -->
+        <h1>Add Salary</h1>
+        <form method="POST" action="{% url 'addSalary' id %}">
+            {% csrf_token %}
+            <label>Month:</label>
+            <select id="monthSelect" name="month">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <label>Salary:</label>
+            <input type="number" name="salary" />
+            <label>Bonus:</label>
+            <input type="number" name="bonus" />
+            <button type="submit">Add</button>
+        </form>
+    </div>
+    <div>
+        <h1>leave</h1>
+        <table>
+            <tr>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Reason</th>
+                <th colspan="1" >Status</th>
+                <th>Actions</th>
+            </tr>
+            {% if emp_leves_len == 0 %}
+                <tr>
+                    <td colspan="4">No leaves Found</td>
+                </tr>
+            {% else %}
+                {% for leave in emp_leaves %}
+                <tr>
+                    <td>{{ leave.start_date }}</td>
+                    <td>{{ leave.end_date }}</td>
+                    <td>{{ leave.reason }}</td>
+                    <td>{{ leave.status }}</td>
+                    <td class="action-button"> 
+                        {% if leave.status == 'Pending' %}
+                            <form method="POST" action="{% url 'leaveaccepted' leave.id %}">
+                                {% csrf_token %}
+                                <button type="submit">Accept</button>
+                            </form>
+                        {% elif leave.status == 'Approved' %}
+                            <form method="POST" action="{% url 'leavedeclined' leave.id %}">
+                                {% csrf_token %}
+                                <button type="submit">Decline</button>
+                            </form>
+                        {% endif %}
+                        {% if leave.status == 'Pending' %}
+                            <form method="POST" action="{% url 'leaveRejected' leave.id %}">
+                                {% csrf_token %}
+                                <button type="submit">Cancel</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+        <h1>Attendance</h1>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+            {% if emp_attendance_len == 0 %}
+                <tr>
+                    <td colspan="3">No Attendance Found</td>
+                </tr>
+            {% else %}
+                {% for attendance in emp_attendances %}
+                <tr>
+                    <td>{{ attendance.date }}</td>
+                    <td>{{ attendance.time }}</td>
+                    <td>{{ attendance.status }}</td>
+                </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+</body>
+</html>

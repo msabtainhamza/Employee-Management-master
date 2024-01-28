@@ -1,0 +1,118 @@
+{% load static  %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static './css/employee.css' %}">
+</head>
+
+
+<body>
+    <br>
+    <br>
+    <div class="cont">
+        <div class="form sign-in">
+            <div  style="display: flex; flex-direction: row; align-items: center; justify-content: space-around;" >
+                <h2>Welcome, Aun M.</h2>
+                <div class="mark-attendance">
+                    {% if status == 'Present' %}
+                        <h3 style="color: green;">{{attendance.status}}</h3>
+                    {% else %}
+                        <h3 style="color: red;">{{attendance.status}}</h3>
+                    {% endif %}
+                    {% if attendance_len == 0 %}
+                        <form method="POST" action="{% url 'markattendance' id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="submit">Mark Attendance</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="info-items">
+                <div class="info-item">
+                    <h3>First Name:</h3>
+                    <h3>Last Name:</h3>
+                    <h3>Email:</h3>
+                    <h3>Designation</h3>
+                </div>
+                <div class="info-item">
+                    <h3>{{first_name}}</h3>
+                    <h3>{{last_name}}</h3>
+                    <h3>{{email}}</h3>
+                    <h3>{{role}}</h3>
+                </div>
+            </div>
+            
+            <div class="salary-slip">
+                <table>
+                    <tr>
+                        <th>Month</th>
+                        <th>Salary</th>
+                        <th>Bonus</th>
+                    </tr>
+                    {% if salaries_len == 0 %}
+                        <tr>
+                            <td colspan="3">No Salary Slip Available</td>
+                        </tr>
+                    {% else %}
+                        {% for salary in salaries %}
+                        <tr>
+                            <td>{{salary.month}}</td>
+                            <td>{{salary.salary}}</td>
+                            <td>{{salary.bonus}}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+        <div class="sub-cont">
+            <div class="img">
+                <div class="img__text m--up">
+                    <h3>Want to apply for Leave? Please Fill form.<h3>
+                    <a href="{% url 'logout' %}" style=" width: 50%; margin-top: 60px; text-decoration: none; background-color: #fff; border: none; color: #000; padding: 10px; border-radius: 5px;">Logout</a>
+                </div>
+                <div class="img__text m--in">
+
+                    <h3>Already Applied for Leave, Go to Main Page.<h3>
+                </div>
+                <div class="img__btn">
+                    <span class="m--up" style="padding: 8px; font-size: 10px;">Apply here</span>
+                    <span class="m--in">Main Page</span>
+                </div>
+            </div>
+            <div class="form sign-up">
+                <form method="POST" action="{% url 'applyforleave' id %}" >
+                    {% csrf_token %}
+                    <h2>Apply for Leave</h2>
+                    <label>
+                        <span>Reason</span>
+                    </label>
+                    <div class="area">
+                        <textarea name="reason" id="" cols="60" rows="10"></textarea>
+                    </div>
+                    <label>
+                        <span>Days</span>
+                        <input type="number" min="1" max="100" name="days">
+                    </label>
+                    <label>
+                        <span>Starting Date</span>
+                        <input type="date" id="" name="date">
+                    </label>
+                    <button type="submit" class="submit">Request Leave</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.img__btn').addEventListener('click', function () {
+            document.querySelector('.cont').classList.toggle('s--signup');
+        });
+    </script>
+</body>
+
+</html>
